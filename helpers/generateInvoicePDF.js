@@ -1,7 +1,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const puppeteer = require('puppeteer');
+const htmlToPdf = require("html-pdf");
 const handlebars = require("handlebars");
 var moment = require("moment");
 
@@ -35,31 +35,52 @@ module.exports = async function generatePDF(invoice) {
     }
     const today = new Date();
     var templateHtml = fs.readFileSync(path.join(process.cwd(), 'helpers/invoiceTemplate.html'), 'utf8');
+    // var template = handlebars.compile(templateHtml);
+    // var finalHtml = encodeURIComponent(template(mockData));
+    // var options = {
+    //     format: 'A4',
+    //     headerTemplate: "<p></p>",
+    //     footerTemplate: "<p></p>",
+    //     displayHeaderFooter: false,
+    //     margin: {
+    //         top: "40px",
+    //         bottom: "100px"
+    //     },
+    //     printBackground: true,
+    //     path: `public/${invoice._id}.pdf`
+    // }
+    // const browser = await puppeteer.launch({
+    //     args: ['--no-sandbox'],
+    //     headless: true
+    // });
+    // const page = await browser.newPage();
+    // await page.goto(`data:text/html,${finalHtml}`, {
+    //     waitUntil: 'networkidle0'
+    // });
+    // let data = await page.pdf(options);
+    // //fs.writeFileSync("data.pdf",data);
+    // await browser.close();
+    // return data;
     var template = handlebars.compile(templateHtml);
-    var finalHtml = encodeURIComponent(template(mockData));
+    var finalHtml = template(mockData);
     var options = {
-        format: 'A4',
-        headerTemplate: "<p></p>",
-        footerTemplate: "<p></p>",
-        displayHeaderFooter: false,
-        margin: {
-            top: "40px",
-            bottom: "100px"
-        },
-        printBackground: true,
-        path: `public/${invoice._id}.pdf`
-    }
-    const browser = await puppeteer.launch({
-        args: ['--no-sandbox'],
-        headless: true
+      format: "A4",
+      directory: `public/${invoice._id}.pdf`,
+    };
+  
+    await new Promise((resolve, reject) => {
+      htmlToPdf
+        .create(finalHtml, options)
+        .toFile(options.directory, function (err, res) {
+          if (err) {
+            console.log("HATA", err);
+            reject();
+          } else {
+            console.log("PDF created",res);
+            resolve();
+          }
+        });
     });
-    const page = await browser.newPage();
-    await page.goto(`data:text/html,${finalHtml}`, {
-        waitUntil: 'networkidle0'
-    });
-    let data = await page.pdf(options);
-    //fs.writeFileSync("data.pdf",data);
-    await browser.close();
-    return data;
+    return true;
 
 }

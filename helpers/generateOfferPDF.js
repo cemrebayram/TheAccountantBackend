@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const puppeteer = require("puppeteer");
 const handlebars = require("handlebars");
 var moment = require("moment");
 const htmlToPdf = require("html-pdf");
@@ -39,8 +38,6 @@ module.exports = async function generatePDF(offer) {
   );
   var template = handlebars.compile(templateHtml);
   var finalHtml = template(mockData);
-  console.log(typeof finalHtml);
-  fs.writeFileSync("test.html", finalHtml);
   var options = {
     format: "A4",
     directory: `public/${offer._id}.pdf`,
