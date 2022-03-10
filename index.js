@@ -5,8 +5,8 @@ const mongoose = require("mongoose"); //mongoose for database connection
 
 //represents application
 const app = express(); //create express server
-const port = process.env.PORT || 80; //port for server
 require("dotenv").config(); //configure dotenv
+const port = process.env.PORT || 80; //port for server
 //routes
 const authRoute = require("./routes/auth.route");
 const userRoute = require("./routes/user.route");
