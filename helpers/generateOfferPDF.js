@@ -3,8 +3,10 @@ const path = require("path");
 const handlebars = require("handlebars");
 var moment = require("moment");
 const htmlToPdf = require("html-pdf");
+const productModel = require("../models/product.model");
 
 module.exports = async function generatePDF(offer) {
+  console.log("BAŞLADI");
   let mockData = {
     customer: {
       name: offer.customer.name,
@@ -14,11 +16,18 @@ module.exports = async function generatePDF(offer) {
       telefon: offer.customer.telefon,
       email: offer.customer.email,
     },
-    products: offer.products.map((p) => ({
-      title: p.title,
-      price: p.price,
-      unit: p.unit,
-    })),
+    products: offer.products.map((p) => {
+      //each p._id is a product
+      return {
+        product: {
+          title: p.product.title,
+          unit_price: p.product.price,
+          unit: p.product.unit,
+        },
+        quantity: p.quantity,
+        price: p.quantity * p.product.price
+      };
+    }),
     user: {
       name: offer.userId.name,
       email: offer.userId.email,
@@ -28,7 +37,6 @@ module.exports = async function generatePDF(offer) {
       uid: offer.userId.uid,
       bankAccount: offer.userId.bankAccount,
     },
-
     date: { createdAt: moment(offer.createdAt).format("DD.MM.YYYY") },
   };
   const today = new Date();
@@ -48,10 +56,8 @@ module.exports = async function generatePDF(offer) {
       .create(finalHtml, options)
       .toFile(options.directory, function (err, res) {
         if (err) {
-          console.log("HATA", err);
           reject();
         } else {
-          console.log("PDF created",res);
           resolve();
         }
       });

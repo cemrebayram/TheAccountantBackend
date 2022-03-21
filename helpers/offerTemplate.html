@@ -142,13 +142,17 @@
 
           <tr class="heading">
             <td>Product/Service</td>
-
+            <td>quantity</td>
+            <td>unit price</td>
             <td>Price</td>
+
           </tr>
 
           {{#each products}}
           <tr class="item">
-            <td>{{this.title}}</td>
+            <td>{{this.product.title}}</td>
+            <td>{{this.quantity}}</td>
+            <td>{{this.product.unit_price}}€</td>
             <td>{{this.price}}€</td>
           </tr>
           {{/each}}
