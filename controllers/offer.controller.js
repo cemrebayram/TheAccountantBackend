@@ -32,7 +32,7 @@ const pdf = async (req, res) => {
       fs.unlink(`public/${offer._id}.pdf`);
     });
   } catch (err) {
-    console.log("HATAAAAA",err);
+    console.log(err);
     res.status(500).json(err);
   }
 };
